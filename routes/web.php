@@ -19,6 +19,7 @@ Route::get('/films/create', 'FilmController@create')->name('create_film_form');
 Route::post('/films/create', 'FilmController@submit')->name('create_film');
 
 Route::get('/films', 'FilmController@all')->name('all_films');
+Route::get('/filmsAlt', 'FilmController@allAlt')->name('all_films_alt');
 Route::get('/films/{film_slug}', 'FilmController@singleFilm')->name('single_film');
 Route::any('/films/{film_slug}/comment', 'FilmController@addComment')->middleware(['auth'])->name('add_comment');
 

@@ -16,16 +16,18 @@ class FilmController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        $films = Film::with(['genres'])->paginate(1);
+        // $per_page = $request->get("per_page", 15);
+        $per_page = 1;
         
-        return response()->json($films, 200);
+        $films = Film::with(['genres'])->paginate($per_page);
         $result = [
             "status" => true,
             "message" => "successfully retrieved films",
-            "data" => $films,
         ];
+
+        $result = array_merge($result, $films->toArray());
 
         return response()->json($result, 200);
     }
@@ -205,24 +207,20 @@ class FilmController extends Controller
         ]);
     }
 
-
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
     public function all()
     {
-        $films = Film::with(['genres'])->get();
+        $films = Film::with(['genres'])->paginate(1);
 
         return view('films', compact('films'));
     }
 
-    /**
-     * Display a single of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
+    public function allAlt()
+    {
+        $films = Film::with(['genres'])->paginate(1);
+
+        return view('filmsAlt', compact('films'));
+    }
+
     public function singleFilm($film_slug)
     {
         $film = Film::where(['slug' => $film_slug])->first();

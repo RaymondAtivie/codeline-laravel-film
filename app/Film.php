@@ -9,9 +9,14 @@ class Film extends Model
 {
     protected $hidden = ['updated_at', 'pivot'];
     protected $dates = ['release_date'];
+    protected $appends = ['url'];
 
     public function getPhotoAttribute($path){
         return url(Storage::url($path));
+    }
+
+    public function getUrlAttribute(){
+        return route('single_film', ['film_slug' => $this->slug]);
     }
 
     public function getReleaseDateAttribute($date){
