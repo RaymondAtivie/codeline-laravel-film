@@ -52,10 +52,7 @@ class FilmController extends Controller
         $film->rating = $data['rating'];
         $film->ticket_price = $data['ticket_price'];
         $film->country = $data['country'];
-
-        //? TODO: upload file and save picture 
-        $film->photo = $data['photo'];
-
+        $film->photo = $request->file('photo')->store('public/film_images');
         $film->save();
 
         $film->genres()->sync($data['genres']);
