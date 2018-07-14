@@ -43,7 +43,29 @@ class FilmController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $data = $request->all();
+
+        $film = new Film;
+        $film->name = $data['name'];
+        $film->description = $data['description'];
+        $film->release_date = $data['release_date'];
+        $film->rating = $data['rating'];
+        $film->ticket_price = $data['ticket_price'];
+        $film->country = $data['country'];
+
+        //? TODO: upload file and save picture 
+        $film->photo = $data['photo'];
+
+        $film->save();
+
+        $film->genres()->sync($data['genres']);
+
+        $result = [
+            "status" => true,
+            "message" => "successfully created film",
+            "data" => $film,
+        ];
+        return response()->json($result, 201);
     }
 
     /**
