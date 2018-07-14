@@ -13,6 +13,30 @@ class FilmController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
+    public function all()
+    {
+        $films = Film::with(['genres'])->get();
+
+        return view('films', compact('films'));
+    }
+
+    /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    // public function singleFilm($film_slug)
+    // {
+    //     $films = Film::with(['genres'])->get();
+
+    //     return view('films', compact('films'));
+    // }
+
+    /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
     public function index()
     {
         $films = Film::with(['genres'])->get();

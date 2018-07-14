@@ -14,6 +14,15 @@ class Film extends Model
         return url(Storage::url($path));
     }
 
+    public function getReleaseDateAttribute($date){
+        $d = new \Carbon\Carbon($date);
+        return $d->format("d M Y");
+    }
+
+    public function getTicketPriceAttribute($price){
+        return "$".number_format($price);
+    }
+
     //Relationships
     public function genres(){
         return $this->belongsToMany('App\Genre');

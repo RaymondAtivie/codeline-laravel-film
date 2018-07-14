@@ -12,5 +12,7 @@
 */
 
 Route::get('/', function () {
-    return view('welcome');
+    return redirect()->route('all_films');
 });
+Route::get('/films', 'Filmcontroller@all')->name('all_films');
+Route::get('/films/{film_slug}', 'Filmcontroller@singleFilm')->name('all_films');
