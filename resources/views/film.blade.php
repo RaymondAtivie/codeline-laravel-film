@@ -81,7 +81,7 @@
                     <hr />
                     @else
                         <div class="alert alert-info">
-                            Login to add a comment
+                            <a href="{{route('login')}}">Login</a> to add a comment
                         </div>
                     @endif
                     

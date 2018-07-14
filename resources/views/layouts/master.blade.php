@@ -14,6 +14,7 @@
                 font-family: 'Open Sans'
             }
         </style>
+        @yield('css')
 
     </head>
     <body>

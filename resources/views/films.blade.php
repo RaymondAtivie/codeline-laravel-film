@@ -1,5 +1,23 @@
 @extends('layouts.master')
 
+@section('css')
+<style>
+    .card-img-top{
+        height: 250px;
+        {{-- background-image: url('../images/home-top.svg'); --}}
+        background-repeat: no-repeat;
+        background-position: bottom center;
+        background-size: cover;
+    }
+    .truncate {
+        width: 100%;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+</style>
+@endsection
+
 @section('content')
     <div class="row mt-5">
         <div class="col-md-12">
@@ -10,22 +28,22 @@
                 @foreach($films as $film)
                 <div class="col-md-4 mb-5">
                     <div class="card">
-                        <img class="card-img-top" src="{{$film->photo}}" alt="Card image cap">
+                        <div class="card-img-top" style="background-image: url('{{$film->photo}}')" alt="Card image cap"></div>
                         <div class="card-body">
-                            <h5 class="card-title mb-0">{{$film->name}}</h5>
-                            <div class="mb-2">
+                            <h5 class="card-title truncate mb-0">{{$film->name}}</h5>
+                            <div class="mb-2 truncate">
                                 @foreach($film->genres as $genre)
                                 <span class="badge badge-pill badge-secondary">{{$genre->name}}</span>
                                 @endforeach
                             </div>
-                            <p class="card-text">
+                            <p class="card-text truncate" title="{{$film->description}}">
                                 {{$film->description}}
                             </p>
                             <div class="row mb-2">
                                 <div class="col-md-4 text-muted">
                                     Release
                                 </div>
-                                <div class="col-md-8 font-bold">
+                                <div class="col-md-8 font-bold truncate">
                                     {{$film->release_date}} ({{$film->country}})
                                 </div>
                             </div>
