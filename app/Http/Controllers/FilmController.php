@@ -104,9 +104,10 @@ class FilmController extends Controller
             ];
 
             return redirect()->back()->with([
-                'msg' => $validator->errors()->all(),
+                'msg' => implode("<br />", $validator->errors()->all()),
                 'type' => 'danger',
-            ]);
+            ])
+            ->withInput($request->input());
         }
 
         $film = new Film;

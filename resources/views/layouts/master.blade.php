@@ -58,7 +58,7 @@
                                             <div>{{$msg}}</div>
                                         @endforeach
                                     @else
-                                        {{Session::get("msg")}}
+                                        {!! Session::get("msg") !!}
                                     @endif
                                     <button type="button" class="close" data-dismiss="alert" aria-label="Close">
                                         <span aria-hidden="true">&times;</span>
