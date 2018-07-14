@@ -6,6 +6,7 @@ use App\Film;
 use App\Comment;
 use Illuminate\Http\Request;
 use Validator;
+use Auth;
 use App\Genre;
 
 class FilmController extends Controller
@@ -128,7 +129,7 @@ class FilmController extends Controller
         ];
 
         return redirect()->back()->with([
-            'msg' => [$result['message']],
+            'msg' => $result['message'],
             'type' => 'success',
         ]);
     }
@@ -263,7 +264,7 @@ class FilmController extends Controller
         $data = $request->all();
 
         $rules = [
-            'name' => 'required',
+            // 'name' => 'required',
             'comment' => 'required',
         ];
         $validator = Validator::make($data, $rules);
@@ -274,19 +275,21 @@ class FilmController extends Controller
                 "message" => "validation error",
                 "errors" => $validator->errors()->all()
             ];
-            return response()->json($result, 400);
+            return redirect()->back()->with($result);
         }
 
+        $user = Auth::user();
+
         $comment = new Comment;
-        $comment->name = $data['name'];
+        $comment->name = $user->name;
         $comment->comment = $data['comment'];
         $comment->film_id = $film->id;
-        $comment->user_id = null;
+        $comment->user_id = $user->id;
 
         $comment->save();
 
         return redirect()->back()->with([
-            'msg' => ['comment successful'],
+            'msg' => 'Comment successful',
             'type' => 'success',
         ]);
     }

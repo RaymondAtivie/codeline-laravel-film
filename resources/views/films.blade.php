@@ -21,7 +21,7 @@
                             <p class="card-text">
                                 {{$film->description}}
                             </p>
-                            <div class="row">
+                            <div class="row mb-2">
                                 <div class="col-md-4 text-muted">
                                     Release
                                 </div>
