@@ -16,39 +16,11 @@ class FilmController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function all()
-    {
-        $films = Film::with(['genres'])->get();
-
-        return view('films', compact('films'));
-    }
-
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function singleFilm($film_slug)
-    {
-        $film = Film::where(['slug' => $film_slug])->first();
-
-        if(!$film){
-            echo "The film you are looking for doesn't exist";
-            return;
-        }
-
-        return view('film', compact('film'));
-    }
-
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
     public function index()
     {
-        $films = Film::with(['genres'])->get();
+        $films = Film::with(['genres'])->paginate(1);
         
+        return response()->json($films, 200);
         $result = [
             "status" => true,
             "message" => "successfully retrieved films",
@@ -69,70 +41,6 @@ class FilmController extends Controller
         $countries = config("data.countries");
 
         return view('create_film', compact('genres', 'countries'));
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function storeWeb(Request $request)
-    {
-        $data = $request->all();
-        // dd($data);
-
-        $rules = [
-            'name' => 'required',
-            'description' => 'required',
-            'release_date' => 'required|date',
-            'rating' => 'required|numeric',
-            'ticket_price' => 'required|numeric',
-            'country' => 'required',
-            'photo' => 'required|image',
-            'genres' => 'required|array'
-        ];
-
-        $validator = Validator::make($data, $rules);
-
-        if($validator->fails()) {
-
-            $result = [
-                "status" => false,
-                "message" => "validation error",
-                "errors" => $validator->errors()->all()
-            ];
-
-            return redirect()->back()->with([
-                'msg' => implode("<br />", $validator->errors()->all()),
-                'type' => 'danger',
-            ])
-            ->withInput($request->input());
-        }
-
-        $film = new Film;
-        $film->name = $data['name'];
-        $film->slug = str_slug($data['name']);
-        $film->description = $data['description'];
-        $film->release_date = $data['release_date'];
-        $film->rating = $data['rating'];
-        $film->ticket_price = $data['ticket_price'];
-        $film->country = $data['country'];
-        $film->photo = $request->file('photo')->store('public/film_images');
-        $film->save();
-
-        $film->genres()->sync($data['genres']);
-
-        $result = [
-            "status" => true,
-            "message" => "successfully created film",
-            "data" => $film,
-        ];
-
-        return redirect()->back()->with([
-            'msg' => $result['message'],
-            'type' => 'success',
-        ]);
     }
 
     /**
@@ -219,17 +127,6 @@ class FilmController extends Controller
     }
 
     /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Film  $film
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Film $film)
-    {
-        //
-    }
-
-    /**
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
@@ -238,7 +135,13 @@ class FilmController extends Controller
      */
     public function update(Request $request, Film $film)
     {
-        //
+        $film->update($request->all());
+
+        $result = [
+            "status" => true,
+            "message" => "successfully updated film",
+            "data" => $film,
+        ];
     }
 
     /**
@@ -249,7 +152,14 @@ class FilmController extends Controller
      */
     public function destroy(Film $film)
     {
-        //
+        $film->delete();
+
+        $result = [
+            "status" => true,
+            "message" => "successfully removed film",
+        ];
+
+        return response()->json($result, 204);
     }
 
     public function addComment(Request $request, $film_slug){
@@ -291,6 +201,94 @@ class FilmController extends Controller
 
         return redirect()->back()->with([
             'msg' => 'Comment successful',
+            'type' => 'success',
+        ]);
+    }
+
+
+    /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function all()
+    {
+        $films = Film::with(['genres'])->get();
+
+        return view('films', compact('films'));
+    }
+
+    /**
+     * Display a single of the resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function singleFilm($film_slug)
+    {
+        $film = Film::where(['slug' => $film_slug])->first();
+
+        if(!$film){
+            echo "The film you are looking for doesn't exist";
+            return;
+        }
+
+        return view('film', compact('film'));
+    }
+
+    public function submit(Request $request)
+    {
+        $data = $request->all();
+        // dd($data);
+
+        $rules = [
+            'name' => 'required',
+            'description' => 'required',
+            'release_date' => 'required|date',
+            'rating' => 'required|numeric',
+            'ticket_price' => 'required|numeric',
+            'country' => 'required',
+            'photo' => 'required|image',
+            'genres' => 'required|array'
+        ];
+
+        $validator = Validator::make($data, $rules);
+
+        if($validator->fails()) {
+
+            $result = [
+                "status" => false,
+                "message" => "validation error",
+                "errors" => $validator->errors()->all()
+            ];
+
+            return redirect()->back()->with([
+                'msg' => implode("<br />", $validator->errors()->all()),
+                'type' => 'danger',
+            ])
+            ->withInput($request->input());
+        }
+
+        $film = new Film;
+        $film->name = $data['name'];
+        $film->slug = str_slug($data['name']);
+        $film->description = $data['description'];
+        $film->release_date = $data['release_date'];
+        $film->rating = $data['rating'];
+        $film->ticket_price = $data['ticket_price'];
+        $film->country = $data['country'];
+        $film->photo = $request->file('photo')->store('public/film_images');
+        $film->save();
+
+        $film->genres()->sync($data['genres']);
+
+        $result = [
+            "status" => true,
+            "message" => "successfully created film",
+            "data" => $film,
+        ];
+
+        return redirect()->back()->with([
+            'msg' => $result['message'],
             'type' => 'success',
         ]);
     }

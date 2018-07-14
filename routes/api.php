@@ -20,3 +20,5 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 Route::get("/films", "FilmController@index");
 Route::post("/films", "FilmController@store");
 Route::get("/films/{film}", "FilmController@show");
+Route::put("/films/{film}", "FilmController@update");
+Route::delete("/films/{film}", "FilmController@delete");

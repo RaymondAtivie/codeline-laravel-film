@@ -16,7 +16,7 @@ Route::get('/', function () {
 })->name("home");
 
 Route::get('/films/create', 'FilmController@create')->name('create_film_form');
-Route::post('/films/create', 'FilmController@storeWeb')->name('create_film');
+Route::post('/films/create', 'FilmController@submit')->name('create_film');
 
 Route::get('/films', 'FilmController@all')->name('all_films');
 Route::get('/films/{film_slug}', 'FilmController@singleFilm')->name('single_film');
