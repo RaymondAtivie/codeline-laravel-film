@@ -35,6 +35,21 @@
         </nav>
 
         <div class="container">
+            <div class="row justify-content-center mt-3">
+                <div class="col-md-10">
+                    @if(Session::has('msg'))
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="alert alert-{{Session::get('type')}}">
+                                    @foreach(Session::get('msg') as $msg)
+                                        <div>{{$msg}}</div>
+                                    @endforeach
+                                </div>
+                            </div>
+                        </div>
+                    @endif
+                </div>
+            </div>
             @yield('content')
         </div>
 

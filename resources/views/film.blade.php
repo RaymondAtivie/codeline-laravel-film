@@ -5,7 +5,8 @@
         <div class="col-md-12">
 
             <div class="row justify-content-center">
-                <div class="col-md-7 mb-5">
+                <div class="col-md-10 mb-5">
+
                     <div class="row align-items-center">
                         <div class="col-md-6">
                             <h2>{{$film->name}}</h2>
@@ -48,6 +49,51 @@
                             {{$film->ticket_price}}
                         </div>
                     </div>
+                </div>
+            </div>
+
+            <div class="row justify-content-center">
+                <div class="col-md-10">
+                    <h4>Comments</h4>
+                    <hr />
+
+                    @if($film->comments()->count() < 1)
+                        <div class="alert alert-info">
+                            No comments for this film!
+                        </div>
+                    @endif
+
+                    <form action="{{route('add_comment', ['film_slug' => $film->slug])}}" method="POST">
+                        {{csrf_field()}}
+                        <div class="row mb-3">
+                            <div class="col-md-12 mb-3">
+                                <div>
+                                    <input type="text" name="name" placeholder="Name" class="form-control" required />
+                                </div>
+                                <div class="mt-2">
+                                    <textarea name="comment" class="form-control" placeholder="Make a comment" required></textarea>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <button type="submit" class="btn btn-block btn-primary">Comment</button>
+                            </div>
+                        </div>
+                    </form>
+                    
+                    <hr />
+                    
+                    @foreach ($film->comments as $comment)
+                        <div class="row mb-3">
+                            <div class="col-md-12">
+                                <div><b>{{$comment->name}}</b></div>
+                                <div>
+                                    <blockquote>
+                                        {{$comment->comment}}
+                                    </blockquote>
+                                </div>
+                            </div>
+                        </div>
+                    @endforeach
                 </div>
             </div>
         </div>

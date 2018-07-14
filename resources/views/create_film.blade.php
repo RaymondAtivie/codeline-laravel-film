@@ -5,18 +5,6 @@
         <div class="col-md-12">
             <h2>New Film</h2>
             <hr />
-            
-            @if(Session::has('msg'))
-            <div class="row">
-                <div class="col-md-12">
-                    <div class="alert alert-{{Session::get('type')}}">
-                        @foreach(Session::get('msg') as $msg)
-                            <div>{{$msg}}</div>
-                        @endforeach
-                    </div>
-                </div>
-            </div>
-            @endif
 
             <form action="{{route('create_film')}}" method="POST" enctype="multipart/form-data">
                 {{csrf_field()}}
@@ -102,7 +90,7 @@
 
                 <div class="row">
                     <div class="col-md-3">
-                        <button type="submit" class="btn btn-primary">Add Film</button>
+                        <button type="submit" class="btn btn-block btn-primary">Add Film</button>
                     </div>
                 </div>
             </form>

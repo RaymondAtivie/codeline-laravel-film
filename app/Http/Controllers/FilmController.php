@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Film;
+use App\Comment;
 use Illuminate\Http\Request;
 use Validator;
 use App\Genre;
@@ -204,7 +205,7 @@ class FilmController extends Controller
             return response()->json($result, 200);
         }
 
-        $film->load(['genres']);
+        $film->load(['genres', 'comments']);
 
         $result = [
             "status" => true,
@@ -247,5 +248,46 @@ class FilmController extends Controller
     public function destroy(Film $film)
     {
         //
+    }
+
+    public function addComment(Request $request, $film_slug){
+        $film = Film::where(['slug' => $film_slug])->first();
+
+        if(!$film){
+            return redirect()->back()-with([
+                'msg' => 'cannot comment here',
+                'type' => 'warning'
+            ]);
+        }
+
+        $data = $request->all();
+
+        $rules = [
+            'name' => 'required',
+            'comment' => 'required',
+        ];
+        $validator = Validator::make($data, $rules);
+        if($validator->fails()) {
+
+            $result = [
+                "status" => false,
+                "message" => "validation error",
+                "errors" => $validator->errors()->all()
+            ];
+            return response()->json($result, 400);
+        }
+
+        $comment = new Comment;
+        $comment->name = $data['name'];
+        $comment->comment = $data['comment'];
+        $comment->film_id = $film->id;
+        $comment->user_id = null;
+
+        $comment->save();
+
+        return redirect()->back()->with([
+            'msg' => ['comment successful'],
+            'type' => 'success',
+        ]);
     }
 }

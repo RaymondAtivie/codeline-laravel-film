@@ -20,3 +20,4 @@ Route::post('/films/create', 'Filmcontroller@storeWeb')->name('create_film');
 
 Route::get('/films', 'Filmcontroller@all')->name('all_films');
 Route::get('/films/{film_slug}', 'Filmcontroller@singleFilm')->name('single_film');
+Route::post('/films/{film_slug}/comment', 'Filmcontroller@addComment')->name('add_comment');
