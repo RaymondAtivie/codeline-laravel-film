@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Film;
 use Illuminate\Http\Request;
 use Validator;
+use App\Genre;
 
 class FilmController extends Controller
 {
@@ -62,7 +63,73 @@ class FilmController extends Controller
      */
     public function create()
     {
-        //
+        $genres = Genre::get();
+        $countries = config("data.countries");
+
+        return view('create_film', compact('genres', 'countries'));
+    }
+
+    /**
+     * Store a newly created resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function storeWeb(Request $request)
+    {
+        $data = $request->all();
+        // dd($data);
+
+        $rules = [
+            'name' => 'required',
+            'description' => 'required',
+            'release_date' => 'required|date',
+            'rating' => 'required|numeric',
+            'ticket_price' => 'required|numeric',
+            'country' => 'required',
+            'photo' => 'required|image',
+            'genres' => 'required|array'
+        ];
+
+        $validator = Validator::make($data, $rules);
+
+        if($validator->fails()) {
+
+            $result = [
+                "status" => false,
+                "message" => "validation error",
+                "errors" => $validator->errors()->all()
+            ];
+
+            return redirect()->back()->with([
+                'msg' => $validator->errors()->all(),
+                'type' => 'danger',
+            ]);
+        }
+
+        $film = new Film;
+        $film->name = $data['name'];
+        $film->slug = str_slug($data['name']);
+        $film->description = $data['description'];
+        $film->release_date = $data['release_date'];
+        $film->rating = $data['rating'];
+        $film->ticket_price = $data['ticket_price'];
+        $film->country = $data['country'];
+        $film->photo = $request->file('photo')->store('public/film_images');
+        $film->save();
+
+        $film->genres()->sync($data['genres']);
+
+        $result = [
+            "status" => true,
+            "message" => "successfully created film",
+            "data" => $film,
+        ];
+
+        return redirect()->back()->with([
+            'msg' => [$result['message']],
+            'type' => 'success',
+        ]);
     }
 
     /**
@@ -95,7 +162,7 @@ class FilmController extends Controller
                 "message" => "validation error",
                 "errors" => $validator->errors()->all()
             ];
-            return response()->json($result);
+            return response()->json($result, 400);
         }
 
         $film = new Film;
