@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Film;
 use Illuminate\Http\Request;
+use Validator;
 
 class FilmController extends Controller
 {
@@ -44,6 +45,29 @@ class FilmController extends Controller
     public function store(Request $request)
     {
         $data = $request->all();
+
+        $rules = [
+            'name' => 'required',
+            'description' => 'required',
+            'release_date' => 'required|date',
+            'rating' => 'required|numeric',
+            'ticket_price' => 'required|numeric',
+            'country' => 'required',
+            'photo' => 'required|image',
+            'genres' => 'required|array'
+        ];
+
+        $validator = Validator::make($data, $rules);
+
+        if($validator->fails()) {
+
+            $result = [
+                "status" => false,
+                "message" => "validation error",
+                "errors" => $validator->errors()->all()
+            ];
+            return response()->json($result);
+        }
 
         $film = new Film;
         $film->name = $data['name'];
