@@ -25,12 +25,17 @@ class FilmController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    // public function singleFilm($film_slug)
-    // {
-    //     $films = Film::with(['genres'])->get();
+    public function singleFilm($film_slug)
+    {
+        $film = Film::where(['slug' => $film_slug])->first();
 
-    //     return view('films', compact('films'));
-    // }
+        if(!$film){
+            echo "The film you are looking for doesn't exist";
+            return;
+        }
+
+        return view('film', compact('film'));
+    }
 
     /**
      * Display a listing of the resource.
@@ -95,6 +100,7 @@ class FilmController extends Controller
 
         $film = new Film;
         $film->name = $data['name'];
+        $film->slug = str_slug($data['name']);
         $film->description = $data['description'];
         $film->release_date = $data['release_date'];
         $film->rating = $data['rating'];

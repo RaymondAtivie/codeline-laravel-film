@@ -13,6 +13,6 @@
 
 Route::get('/', function () {
     return redirect()->route('all_films');
-});
+})->name("home");
 Route::get('/films', 'Filmcontroller@all')->name('all_films');
-Route::get('/films/{film_slug}', 'Filmcontroller@singleFilm')->name('all_films');
+Route::get('/films/{film_slug}', 'Filmcontroller@singleFilm')->name('single_film');
